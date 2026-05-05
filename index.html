@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Gastos Pro</title>
+    <style>
+        :root {
+            --primary: #6c5ce7;
+            --ingreso: #00b894;
+            --gasto: #d63031;
+            --bg: #f8f9fd;
+            --text-dark: #2d3436;
+            --white: rgba(255, 255, 255, 0.85);
+            --shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        * { box-sizing: border-box; transition: all 0.3s ease; }
+
+        body { 
+            font-family: 'Inter', -apple-system, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            color: var(--text-dark);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* --- FONDO MODERNO ANIMADO --- */
+        .bg-blobs {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-color: #f0f2f5;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(70px);
+            opacity: 0.4;
+            animation: move 20s infinite alternate;
+        }
+
+        .blob-1 { width: 500px; height: 500px; background: var(--primary); top: -100px; right: -100px; }
+        .blob-2 { width: 450px; height: 450px; background: var(--ingreso); bottom: -100px; left: -100px; animation-delay: -5s; }
+
+        @keyframes move {
+            from { transform: translate(0, 0) rotate(0deg); }
+            to { transform: translate(60px, 120px) rotate(45deg); }
+        }
+
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .main-container { 
+            display: grid; 
+            grid-template-columns: 1fr 1.3fr; 
+            gap: 30px; 
+            max-width: 1200px; 
+            margin: 40px auto; 
+        }
+
+        /* Efecto Glassmorphism */
+        .col-form, .col-list { 
+            background: var(--white); 
+            backdrop-filter: blur(12px);
+            padding: 40px; 
+            border-radius: 28px; 
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: var(--shadow); 
+        }
+
+        h1 { font-weight: 800; font-size: 1.8rem; margin: 0 0 20px 0; letter-spacing: -0.5px; }
+        
+        .balance-container { 
+            background: linear-gradient(135deg, var(--primary) 0%, #a29bfe 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 24px;
+            text-align: center;
+            margin-bottom: 25px;
+            box-shadow: 0 15px 30px rgba(108, 92, 231, 0.2);
+        }
+
+        #saldo-total { font-size: 3rem; font-weight: 800; margin: 10px 0; }
+
+        .resumen-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px; }
+        .card { padding: 15px; border-radius: 18px; color: white; }
+        .card.ingreso { background: var(--ingreso); }
+        .card.gasto { background: var(--gasto); }
+        .card p { font-size: 1.4rem; font-weight: 700; margin: 5px 0 0 0; }
+
+        /* FORMULARIO */
+        .formulario { display: flex; flex-direction: column; gap: 15px; }
+        input { 
+            padding: 18px; border: 2px solid #eee; border-radius: 16px; 
+            font-size: 1rem; background: rgba(255,255,255,0.7);
+        }
+        input:focus { outline: none; border-color: var(--primary); background: white; }
+
+        .botonera { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-action { 
+            padding: 18px; border: none; border-radius: 16px; 
+            color: white; font-weight: 700; cursor: pointer; font-size: 1rem;
+        }
+        .btn-action:hover { transform: translateY(-3px); filter: brightness(1.1); }
+
+        /* LISTA */
+        ul { list-style: none; padding: 0; }
+        li { 
+            display: flex; justify-content: space-between; align-items: center; 
+            padding: 18px; margin-bottom: 12px; background: rgba(255,255,255,0.5);
+            border-radius: 18px; border: 1px solid rgba(255,255,255,0.3);
+            animation: fadeIn 0.4s ease-out;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .positivo { color: var(--ingreso); font-weight: 700; }
+        .negativo { color: var(--gasto); font-weight: 700; }
+
+        .btn-eliminar {
+            background: #ffebeb; border: none; color: var(--gasto);
+            padding: 10px; border-radius: 12px; cursor: pointer;
+            display: flex; align-items: center; opacity: 0.3;
+        }
+        li:hover .btn-eliminar { opacity: 1; }
+
+        /* RESPONSIVE */
+        @media (max-width: 850px) { 
+            .main-container { grid-template-columns: 1fr; }
+            .col-form, .col-list { padding: 25px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="main-container">
+        <div class="col-form">
+            <h1>💰 Mis Finanzas</h1>
+            <div class="balance-container">
+                <span>Saldo Actual</span>
+                <p id="saldo-total">$0</p>
+            </div>
+            <div class="resumen-cards">
+                <div class="card ingreso">
+                    <span>Ingresos</span>
+                    <p id="total-ingresos">$0</p>
+                </div>
+                <div class="card gasto">
+                    <span>Gastos</span>
+                    <p id="total-gastos">$0</p>
+                </div>
+            </div>
+            <div class="formulario">
+                <input type="text" id="descripcion" placeholder="Descripción">
+                <input type="text" id="monto" placeholder="Monto (ej: 5.000)">
+                <div class="botonera">
+                    <button id="btn-ingreso" class="btn-action" style="background: var(--ingreso)">✚ Ingreso</button>
+                    <button id="btn-gasto" class="btn-action" style="background: var(--gasto)">− Gasto</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-list">
+            <h2>Historial</h2>
+            <ul id="lista-movimientos"></ul>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, orderBy, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "TU_API_KEY",
+            authDomain: "TU_PROYECTO.firebaseapp.com",
+            projectId: "TU_PROYECTO_ID",
+            storageBucket: "TU_PROYECTO.appspot.com",
+            messagingSenderId: "TU_ID",
+            appId: "TU_APP_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const finanzasRef = collection(db, "finanzas");
+
+        const inputMonto = document.getElementById('monto');
+        const inputDesc = document.getElementById('descripcion');
+        const formatear = (v) => new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', minimumFractionDigits: 0 }).format(v);
+
+        // Máscara de miles
+        inputMonto.addEventListener('input', (e) => {
+            let valor = e.target.value.replace(/\D/g, "");
+            if (valor !== "") e.target.value = new Intl.NumberFormat('es-AR').format(parseInt(valor));
+        });
+
+        // Función Eliminar
+        window.eliminarDato = async (id) => {
+            if (confirm("¿Eliminar este registro?")) await deleteDoc(doc(db, "finanzas", id));
+        };
+
+        // Función Guardar
+        const guardar = async (tipo) => {
+            const d = inputDesc.value;
+            const m = parseFloat(inputMonto.value.replace(/\./g, ""));
+            if (!d || isNaN(m)) return alert("Completá los datos");
+
+            await addDoc(finanzasRef, { descripcion: d, monto: m, tipo: tipo, fecha: Date.now() });
+            inputDesc.value = ""; inputMonto.value = "";
+        };
+
+        document.getElementById('btn-ingreso').onclick = () => guardar('ingreso');
+        document.getElementById('btn-gasto').onclick = () => guardar('gasto');
+
+        // Escucha Firebase
+        onSnapshot(query(finanzasRef, orderBy("fecha", "desc")), (snap) => {
+            let ing = 0, gas = 0, html = "";
+            snap.forEach(documento => {
+                const i = documento.data();
+                const id = documento.id;
+                i.tipo === "ingreso" ? ing += i.monto : gas += i.monto;
+                html += `
+                    <li>
+                        <div>
+                            <span>${i.descripcion}</span><br>
+                            <small style="color:gray">${new Date(i.fecha).toLocaleDateString()}</small>
+                        </div>
+                        <div style="display:flex; align-items:center; gap:10px">
+                            <span class="${i.tipo}">${i.tipo === 'ingreso'?'+':'-'}${formatear(i.monto)}</span>
+                            <button class="btn-eliminar" onclick="eliminarDato('${id}')">🗑️</button>
+                        </div>
+                    </li>`;
+            });
+            document.getElementById('lista-movimientos').innerHTML = html;
+            document.getElementById('total-ingresos').innerText = formatear(ing);
+            document.getElementById('total-gastos').innerText = formatear(gas);
+            document.getElementById('saldo-total').innerText = formatear(ing - gas);
+        });
+    </script>
+</body>
+</html>

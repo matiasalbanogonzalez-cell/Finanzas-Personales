@@ -1,0 +1,261 @@
+<style>
+    :root {
+        --primary: #6c5ce7;
+        --ingreso: #00b894;
+        --gasto: #d63031;
+        --bg: #f8f9fd;
+        --text: #2d3436;
+    }
+
+    * { box-sizing: border-box; transition: all 0.3s ease; }
+    
+    body { 
+        font-family: 'Inter', 'Segoe UI', sans-serif; 
+        background-color: var(--bg); 
+        margin: 0; 
+        padding: 20px; 
+        color: var(--text);
+    }
+
+    .main-container { 
+        display: grid; 
+        grid-template-columns: 1fr 1.2fr; 
+        gap: 30px; 
+        max-width: 1200px; 
+        margin: 40px auto; 
+    }
+
+    .col-form, .col-list { 
+        background: white; 
+        padding: 35px; 
+        border-radius: 24px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.04); 
+    }
+
+    h1 { font-weight: 800; letter-spacing: -1px; margin-top: 0; }
+
+    /* Efecto en el Saldo Principal */
+    .balance-container { 
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+    }
+
+    #saldo-total { 
+        font-size: 3rem; 
+        font-weight: 800; 
+        margin: 10px 0; 
+        color: white !important; /* Mantenemos blanco sobre el gradiente */
+    }
+
+    .resumen-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+    
+    .card { 
+        padding: 20px; 
+        border-radius: 18px; 
+        text-align: left; 
+        color: white; 
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card span { font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; font-weight: 700; }
+    .card p { font-size: 1.5rem; font-weight: 700; margin: 5px 0 0 0; }
+
+    /* Inputs Modernos */
+    .formulario input { 
+        padding: 18px; 
+        border: 2px solid #edf2f7; 
+        border-radius: 15px; 
+        font-size: 1rem; 
+        background: #fdfdfd;
+    }
+
+    .formulario input:focus { 
+        border-color: var(--primary); 
+        background: white;
+        box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        outline: none;
+    }
+
+    .btn-action { 
+        padding: 18px; 
+        border: none; 
+        border-radius: 15px; 
+        color: white; 
+        font-weight: 700; 
+        cursor: pointer; 
+        font-size: 1.1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-action:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+    .btn-action:active { transform: translateY(0); }
+
+    /* Lista de Movimientos con Animación */
+    li { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 20px; 
+        margin-bottom: 12px;
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        animation: slideIn 0.4s ease-out forwards;
+    }
+
+    li:hover { border-color: #e2e8f0; background: #fcfcfc; }
+
+    .btn-eliminar {
+        background: #fff5f5;
+        border: none;
+        color: var(--gasto);
+        padding: 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        opacity: 0; /* Oculto por defecto, aparece al pasar el mouse */
+    }
+
+    li:hover .btn-eliminar { opacity: 1; }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 768px) { .main-container { grid-template-columns: 1fr; margin: 10px; } }
+</style><style>
+    :root {
+        --primary: #6c5ce7;
+        --ingreso: #00b894;
+        --gasto: #d63031;
+        --bg: #f8f9fd;
+        --text: #2d3436;
+    }
+
+    * { box-sizing: border-box; transition: all 0.3s ease; }
+    
+    body { 
+        font-family: 'Inter', 'Segoe UI', sans-serif; 
+        background-color: var(--bg); 
+        margin: 0; 
+        padding: 20px; 
+        color: var(--text);
+    }
+
+    .main-container { 
+        display: grid; 
+        grid-template-columns: 1fr 1.2fr; 
+        gap: 30px; 
+        max-width: 1200px; 
+        margin: 40px auto; 
+    }
+
+    .col-form, .col-list { 
+        background: white; 
+        padding: 35px; 
+        border-radius: 24px; 
+        box-shadow: 0 20px 40px rgba(0,0,0,0.04); 
+    }
+
+    h1 { font-weight: 800; letter-spacing: -1px; margin-top: 0; }
+
+    /* Efecto en el Saldo Principal */
+    .balance-container { 
+        background: linear-gradient(135deg, #6c5ce7 0%, #a29bfe 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 20px;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 20px rgba(108, 92, 231, 0.2);
+    }
+
+    #saldo-total { 
+        font-size: 3rem; 
+        font-weight: 800; 
+        margin: 10px 0; 
+        color: white !important; /* Mantenemos blanco sobre el gradiente */
+    }
+
+    .resumen-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 30px; }
+    
+    .card { 
+        padding: 20px; 
+        border-radius: 18px; 
+        text-align: left; 
+        color: white; 
+        position: relative;
+        overflow: hidden;
+    }
+
+    .card span { font-size: 0.9rem; opacity: 0.9; text-transform: uppercase; font-weight: 700; }
+    .card p { font-size: 1.5rem; font-weight: 700; margin: 5px 0 0 0; }
+
+    /* Inputs Modernos */
+    .formulario input { 
+        padding: 18px; 
+        border: 2px solid #edf2f7; 
+        border-radius: 15px; 
+        font-size: 1rem; 
+        background: #fdfdfd;
+    }
+
+    .formulario input:focus { 
+        border-color: var(--primary); 
+        background: white;
+        box-shadow: 0 0 0 4px rgba(108, 92, 231, 0.1);
+        outline: none;
+    }
+
+    .btn-action { 
+        padding: 18px; 
+        border: none; 
+        border-radius: 15px; 
+        color: white; 
+        font-weight: 700; 
+        cursor: pointer; 
+        font-size: 1.1rem;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .btn-action:hover { transform: translateY(-3px); box-shadow: 0 8px 15px rgba(0,0,0,0.15); }
+    .btn-action:active { transform: translateY(0); }
+
+    /* Lista de Movimientos con Animación */
+    li { 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center; 
+        padding: 20px; 
+        margin-bottom: 12px;
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 16px;
+        animation: slideIn 0.4s ease-out forwards;
+    }
+
+    li:hover { border-color: #e2e8f0; background: #fcfcfc; }
+
+    .btn-eliminar {
+        background: #fff5f5;
+        border: none;
+        color: var(--gasto);
+        padding: 10px;
+        border-radius: 12px;
+        cursor: pointer;
+        opacity: 0; /* Oculto por defecto, aparece al pasar el mouse */
+    }
+
+    li:hover .btn-eliminar { opacity: 1; }
+
+    @keyframes slideIn {
+        from { opacity: 0; transform: translateX(20px); }
+        to { opacity: 1; transform: translateX(0); }
+    }
+
+    @media (max-width: 768px) { .main-container { grid-template-columns: 1fr; margin: 10px; } }
+</style>
